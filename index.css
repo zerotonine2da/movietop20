@@ -110,7 +110,7 @@ footer {
 .cardList {
     /*container*/
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     column-gap: 15px; /*세로 간격*/
     row-gap: 40px; /*가로 간격*/
     margin-top: 70px; /*div 시작하는 위부분 간격*/
