@@ -62,25 +62,30 @@ fetch('https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1', opti
 
 // 2. 영화 검색 버튼 클릭 시 조회 조건
 document.querySelector('#searchBtn').addEventListener('click', function () {
-    Search();
+    doSearch();
 });
 
 // 3.검색
-function Search() {
+function doSearch() {
     let text = document.querySelector('#searchInput').value.toUpperCase();
     let cards = document.getElementsByClassName('top');
+
     let cardContainer = document.getElementsByClassName('innerDiv');
 
+    let cnt = 0;
     for (let i = 0; i < cards.length; i++) {
         let titleName = cards[i].getElementsByClassName('title');
 
         if (titleName[0].innerHTML.toUpperCase().indexOf(text) > -1) {
             cardContainer[i].style.display = 'block';
+            cnt++;
         } else {
             cardContainer[i].style.display = 'none';
         }
     }
-    console.log(cnt);
+    if (cnt == 0) {
+        alert('검색 결과가 없습니다.');
+    }
 }
 
 // 4.웹사이트 랜딩/새로고침 후 검색 입력란 커서 자동 위치
@@ -91,6 +96,6 @@ window.addEventListener('load', () => {
 // 5.키보드 enter => 검색기능
 document.getElementById('searchInput').addEventListener('keydown', (e) => {
     if (e.key == 'Enter') {
-        Search();
+        doSearch();
     }
 });
