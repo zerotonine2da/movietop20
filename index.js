@@ -9,56 +9,62 @@ const options = {
 };
 
 const title_group = []; //영화 제목 20개
+let data = {};
+(async function () {
+    try {
+        const result = await fetch(
+            'https://api.themoviedb.org/3/movie/now_playing?language=ko-US&page=1',
+            options
+        ).then((response) => response.json());
 
-fetch('https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1', options)
-    .then((response) => response.json())
-    .then((response) => {
-        // let results = response.results; //api에서 가져온 영화 리스트 20개 (배열 안 객체)
-        let map_arr = response.results.map((v) => v);
+        data = result.results;
+        drawCard(data);
+    } catch (error) {
+        console.log(error);
+    }
+})();
 
-        map_arr.forEach((x, i) => {
-            title_group.push(x['originalTitle']);
+//data:fetch로 가져온 데이터 (result.results)
+function drawCard(data) {
+    let attachCardList = document.querySelector('#cardList');
+    attachCardList.innerHTML = data
+        .map(
+            (movie) => `
+            <a class="cardContainer" id = ${movie.id}>
+                <div class="top">
+                    <div class="title"><strong>${movie.original_title}</strong></div>
+                </div>
 
-            const temp01 = document.createElement('div');
-            temp01.className = 'innerDiv';
+                <div class="img">
+                    <div class="hoverTop">
+                    <p class="p1"><strong>[제목]</strong> ${movie.original_title}</p>
+                    <p class="p2"><strong>[평점]</strong> ${movie.vote_average}</p>
+                </div>
 
-            let index = i + 1;
-            let id = x['id'];
-            let originalTitle = x['original_title'];
-            let overview = x['overview'];
-            let vote_average = x['vote_average'];
-            let baseUrl = 'https://image.tmdb.org/t/p/original';
-            let posterPath = baseUrl + x['poster_path'];
 
-            temp01.innerHTML = `
-            <a class="cardContainer">
-    <div class="top">
-        <div class="title"><strong>${originalTitle}</strong></div>
-        <div class="index">${index}</div>
-    </div>
-    <div class="img">
-        <div class="hoverTop">
-            <div class="idBtn" ><button class="idBtn01" onclick="alert('영화 Id: ${id}')">영화 id 보기</button> </div>
-            <p class="p1"><strong>[제목]</strong> ${originalTitle}</p>
-            <p class="p2"><strong>[평점]</strong> ${vote_average}</p>
-        </div>
-        <div class="hoverBottom">
-            <p class="p3"><strong>[요약]</strong> ${overview}</p>
-        </div>
+                <div class="hoverBottom">
+                    <p class="p3"><strong>[요약]</strong> ${movie.overview}</p>
+                </div>
 
-        <div class="imgFrame" id="imgFile">
-            <img src="${posterPath}" alt="${originalTitle}" onclick="alert('[${originalTitle}] id : ${id}')" />
-        </div>
-    </div>
-</a>
-        
-        
-            `;
+                <div class="imgFrame" id="imgFile">
+                  <img src="https://image.tmdb.org/t/p/original${movie.poster_path}" alt="${movie.original_title}"  id : ${movie.id}')" />
+                </div>
+                </div>
+            </a>
+            `
+        )
+        .join('');
+    attachCardList.addEventListener('click', clickCardImage); //사진 클릭시 영화 id값 보여주기
+}
 
-            document.querySelector('#cardList').append(temp01);
-        });
-    })
-    .catch((err) => console.error(err));
+// 1. 이미지 클릭시 영화id값 보여주기
+function clickCardImage({ target }) {
+    if (target.matches('.cardContainer')) {
+        alert(`영화 id: ${target.id}`);
+    } else {
+        alert(`영화 id: ${target.parentNode.id}`);
+    }
+}
 
 // 2. 영화 검색 버튼 클릭 시 조회 조건
 document.querySelector('#searchBtn').addEventListener('click', function () {
